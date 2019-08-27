@@ -27,13 +27,13 @@ warnings.filterwarnings("ignore")
 
 def readData():
 
-    data = pd.read_csv('data/normalized.csv', error_bad_lines=False, sep=';')
+    data = pd.read_csv('data/encoded.csv', error_bad_lines=False, sep=';')
     return data
 
 dict_classifiers = {
     "Logistic Regression": LogisticRegression(),
     "Nearest Neighbors": KNeighborsClassifier(),
-    #"Linear SVM": SVC(),
+    "Linear SVM": SVC(),
     #"Gradient Boosting Classifier": GradientBoostingClassifier(n_estimators=1000),
     "Decision Tree": tree.DecisionTreeClassifier(),
     #"Random Forest": RandomForestClassifier(n_estimators=1000),
@@ -139,13 +139,24 @@ def test(clf, x_test):
     prediction = clf.predict(X=x_test)
     print(prediction)
 
-data = readData()
-#print(data.dtypes)
-#data = getLimitedData(data, 0.5)
-tree_clf = classification(data, tree.DecisionTreeClassifier(), 'HostingPartnerCountry_code', False)
-knn_clf = classification(data, GaussianNB(), 'HostingPartnerCountry_code', False)
 
-#test(tree_clf, [['27','1','64','2','0','0','14','1827','1299','587']])
-#display_dict_models
-#checkDataValues(data)
-#classification(data)
+def logic():
+
+    data = readData()
+    #print(data.dtypes)
+    #data = getLimitedData(data, 0.5)
+
+    #tree_clf = classification(data, tree.DecisionTreeClassifier(), 'ReceivingCountry', False)
+    #knn_clf = classification(data, GaussianNB(), 'ReceivingCountry', False)
+
+    for classifier_name, classifier in list(dict_classifiers.items()):
+        print('Budowanie modelu klasyfikatora ' + classifier_name)
+        classification(data, classifier, 'ReceivingCountry', False)
+
+
+    #test(tree_clf, [['27','1','64','2','0','0','14','1827','1299','587']])
+    #display_dict_models
+    #checkDataValues(data)
+    #classification(data)
+
+logic()
