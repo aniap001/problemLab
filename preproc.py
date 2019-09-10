@@ -1,13 +1,7 @@
-import pandas as pd
-import numpy as np
-
-from IPython.display import display
-        
+import pandas as pd        
 
 def readData():
     data = pd.read_csv('data/sm13-14.csv', error_bad_lines=False, na_values=['Not known or unspecified'], decimal=',', sep=';', usecols=['SendingCountry', 'MobilityType', 'SpecialNeeds', 'SubjectAreaName', 'CombinedMobilityYesNo', 'StartDate', 'EndDate', 'DurationInMonths', 'DurationInDays', 'SubsistenceTravel', 'LevelOfStudy', 'ParticipantType', 'ParticipantGender', 'Language', 'SendingPartnerErasmusID', 'HostingPartnerErasmusID', 'HostingPartnerCity', 'ReceivingCountry'])
-    #data = pd.read_csv('data/sm13-14.csv', error_bad_lines=False, sep=';', na_values=['0'],  usecols=['SendingCountry', 'MobilityType', 'SubjectAreaCode', 'DurationInMonths', 'LevelOfStudy', 'ParticipantGender', 'Language', 'SendingPartnerErasmusID', 'HostingPartnerCountry'])
-    #data = pd.read_csv('data/sm13-14.csv', error_bad_lines=False, sep=';', na_values=['0'])
     return data
 
 def selectData(data, column, value):
@@ -25,12 +19,12 @@ def printMissingValues(dataset):
     dataset.isnull().sum().to_frame().to_csv('data/generated_data.csv')
     print("------------------------------------------")
 
-def deleteRowsWithMissingValues(dataset):
+def deleteRowsWithMissingValues(data):
     print("\nKasowanie rekordów zawierających braki...")
-    print("Liczba rekordów w bazie przed kasowaniem: %d" % dataset.shape[0])
-    changedDataset = dataset.dropna(axis=0, how='any')
+    print("Liczba rekordów w bazie przed kasowaniem: %d" % data.shape[0])
+    changedDataset = data.dropna(axis=0, how='any')
     print("Liczba rekordów w bazie po kasowaniu: %d" % changedDataset.shape[0])
-    print("Usunieto %d rekordów" % (dataset.shape[0] -changedDataset.shape[0]))
+    print("Usunieto %d rekordów" % (data.shape[0] -changedDataset.shape[0]))
     return changedDataset
 
 def deleteColumns(data, columns):
@@ -57,11 +51,7 @@ def howManyUnique(data):
     for col in data.columns.values:
         print (str(col) + ': ' + str(len(data[col].unique().tolist())))
 
-def transformToBinary(data):
-    data.SpecialNeeds[data.SpecialNeeds == 0] = 0
-    data.SpecialNeeds[data.SpecialNeeds != 0] = 1
-    data = data.astype({'SpecialNeeds' : int})
-    return data
+
 def logic():
 
     data = readData()
@@ -75,7 +65,6 @@ def logic():
     checkDataValues(data)
     data = deleteColumns(data, {'StartDate', 'EndDate', 'DurationInDays', 'ParticipantType'})
 
-    data = transformToBinary(data)
     writeDataFrameToCSV(data, 'processed.csv')
 
 logic()
