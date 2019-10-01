@@ -112,71 +112,26 @@ def logic():
 
     data = readData()
 
-    data = deleteColumns(data, ['SendingCountry', 'HostingPartnerCity'])
+    data = deleteColumns(data, ['SendingPartnerErasmusID', 'HostingPartnerCity'])
 
     data = transformToBinary(data)
 
     class_column = data['ReceivingCountry']
     data = deleteColumns(data, ['ReceivingCountry'])
-    data = encodeData(data, 'label-encoding', ['MobilityType', 'SubjectAreaName', 'DurationInMonths', 'LevelOfStudy', 'ParticipantGender', 'Language', 'SendingPartnerErasmusID'])
+    data = encodeData(data, 'label-encoding', ['MobilityType', 'SubjectAreaName', 'DurationInMonths', 'LevelOfStudy', 'ParticipantGender', 'Language', 'SendingCountry'])
     
-    #correlationMatrix(data, True)
+    correlationMatrix(data, True)
     
     data = normalizeColumns(data, ['SubsistenceTravel', 'MobilityType', 'SubjectAreaName', 'DurationInMonths', 'LevelOfStudy', 'ParticipantGender', 'Language', 'SendingPartnerErasmusID'])
-    
+    #data = normalizeColumns(data, ['SubsistenceTravel'])
     showDataVariance(data)
-    data = pca_reduction(data, 6)
+    data = pca_reduction(data, 200)
 
     #data = deleteColumns(data, ['MobilityType', 'SpecialNeeds', 'LevelOfStudy', 'ParticipantGender'])
 
     data['ReceivingCountry'] = class_column
-    writeDataFrameToCSV(data, 'do_klasyfikacji/label_encoded_pca_reduction.csv')
+    writeDataFrameToCSV(data, 'do_klasyfikacji/one_hot_encoded_no_reduction.csv')
     
     #display_corr_with_col(data, 'ReceivingCountry')
 
 logic()
-
-
-
-
-# def getCodesFromData(data):
-#     display(data.describe())
-#     dataCodes = data[['SendingCountry', 'ReceivingCountry', 'MobilityType', 'SpecialNeeds', 'SubjectAreaName', 'DurationInMonths', 'SubsistenceTravel', 'LevelOfStudy', 'ParticipantGender', 'Language', 'SendingPartnerErasmusID', 'HostingPartnerCity']].copy()
-#     return dataCodes
-
-
-
-# def cramers_v(x, y):
-#     confusion_matrix = pd.crosstab(x,y)
-#     chi2 = ss.chi2_contingency(confusion_matrix)[0]
-#     n = confusion_matrix.sum().sum()
-#     phi2 = chi2/n
-#     r,k = confusion_matrix.shape
-#     phi2corr = max(0, phi2-((k-1)*(r-1))/(n-1))
-#     rcorr = r-((r-1)**2)/(n-1)
-#     kcorr = k-((k-1)**2)/(n-1)
-#     return np.sqrt(phi2corr/min((kcorr-1),(rcorr-1)))
-
-# def categoricalCorr(data):
-#     correlation_matrix = cramers_v()
-#     # plt.figure(figsize=(8,8))
-#     # ax = sns.heatmap(correlation_matrix, vmax=1, square=True, annot=True,fmt='.2f', cmap ='GnBu', cbar_kws={"shrink": .5}, robust=True)
-#     # plt.title('Macierz korelacji pomiędzy cechami', fontsize=20)
-#     # plt.show()
-
-
-
-# def display_corr_with_col(df, col):
-#     correlation_matrix = df.corr(method='spearman')
-#     correlation_type = correlation_matrix[col].copy()
-#     abs_correlation_type = correlation_type.apply(lambda x: abs(x))
-#     desc_corr_values = abs_correlation_type.sort_values(ascending=False)
-#     y_values = list(desc_corr_values.values)[1:]
-#     x_values = range(0,len(y_values))
-#     xlabels = list(desc_corr_values.keys())[1:]
-#     fig, ax = plt.subplots(figsize=(8,8))
-#     ax.bar(x_values, y_values)
-#     ax.set_title('Korelacje wszystkich cech z {}'.format(col), fontsize=15)
-#     ax.set_ylabel('Współczynnik korelacji Spearmana (wartość bezwzględna)', fontsize=13)
-#     plt.xticks(x_values, xlabels, rotation='vertical')
-#     plt.show()
